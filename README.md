@@ -1,77 +1,89 @@
 # Die Casting Process Optimization
-
-This project focuses on optimizing the die casting manufacturing process using machine learning techniques. The goal is to identify key factors affecting product quality and build predictive models to improve production consistency and reduce defects.
-
 ---
+This project focuses on optimizing the die casting manufacturing process using machine learning techniques, with an emphasis on **visual exploratory data analysis (EDA)** and **feature interpretation through data visualization**.
 
 ## 📌 Project Overview
+---
+Die casting is a manufacturing process in which molten metal is injected into a mold cavity under high pressure. While it offers high precision and cost-efficiency, inconsistencies in managing key process variables cause quality fluctuations and increase defect rates.
 
-Die casting is a manufacturing process in which molten metal is injected into a mold cavity under high pressure. Although it offers high precision and cost-efficiency, inconsistencies in managing key process variables lead to quality fluctuations and defect rates. This project aims to:
-
-- Analyze key variables such as pressure, speed, temperature, and cycle time.
-- Predict product defects (pass/fail).
-- Propose optimal process ranges to maximize success rates.
+This project aims to:
+- Visually analyze key variables such as pressure, speed, temperature, and cycle time.
+- Predict product defects (pass/fail) based on process data.
+- Propose optimal process control ranges to maximize production success.
 
 **Dataset Source**: KAMP Casting Process Optimization AI Dataset  
 **Size**: 92,015 rows × 31 columns  
-**Target**: `passorfail` (0 = Pass, 1 = Fail)
+**Target Variable**: `passorfail` (0 = Pass, 1 = Fail)
 
+## 📊 Exploratory Data Analysis (EDA)
 ---
+Extensive visual EDA was conducted to understand key factors influencing defect rates.
 
-## 🧪 Exploratory Data Analysis (EDA)
+### Correlation Matrix
+Cast pressure (`cast_pressure`) shows a strong negative correlation (-0.76) with product defects.
+<img src="figures/correlation_matrix.png" width="600">
 
-- **Key correlation**: Strong negative correlation between `cast_pressure` and product failure.
-- **Imbalance**: Fail cases are significantly fewer than pass cases.
-- **Significant variables**: `cast_pressure`, `low_section_speed`, and others showed clear separation between classes.
+### Pivot Table Visualization
+Significant mean differences observed for `cast_pressure` and `low_section_speed` between pass/fail groups.
+<img src="figures/pivot_table.png" width="500">
 
----
+### Target Distribution (Imbalance)
+The pass/fail target variable is highly imbalanced. Handling imbalance was a key focus during modeling.
+<img src="figures/target_distribution.png" width="500">
 
 ## ⚙️ Methodology
-
-The model development was carried out in **three main trials**:
+---
+The modeling process was iterated in **three major trials**, with visualization-driven insights informing each step.
 
 ### 🔁 Trial 1
-
-- Preprocessing: Dropped columns with >40% missing, removed remaining NaNs.
-- Modeling: Random Forest, XGBoost, LightGBM
-- Handling imbalance: SMOTE
-- Best F1 (class=1): ~0.90
+- Dropped columns with >40% missing values.
+- Applied **SMOTE** oversampling for fail class (minority).
+- Models: Random Forest, XGBoost, LightGBM.
+- **F1 score (class=1)** ≈ 0.90.
 
 ### 🔁 Trial 2
+- Applied **KNN Imputer (k=5)** for missing value handling.
+- Models: XGBoost, Random Forest, Logistic Regression.
+- **XGBoost** achieved the best performance with **F1(class=1) = 0.91**.
+- Feature Importance Visualization confirmed the influence of `cast_pressure` and `mold_temp`.
 
-- Missing values handled with **KNN Imputer (k=5)**.
-- Additional models tested: Logistic Regression + Tree models.
-- XGBoost gave the best result with F1(class=1) = **0.91**
+<img src="figures/feature_importance.png" width="600">
 
 ### 🔁 Trial 3
-
-- Feature engineering:
-  - Interaction terms for highly correlated features.
-  - Feature binning (e.g., mold temperature).
-  - Log and quantile transformation for skewed features.
-- No SMOTE used.
-- Hyperparameter tuning with XGBoost:
-  - Best F1(class=1): **0.89**
-
----
+- Engineered new features (interaction terms, binning).
+- Applied log and quantile transformations to skewed features.
+- Conducted detailed EDA by success/failure groups to derive additional transformations.
 
 ## 🏆 Final Model & Results
-
-- **Selected Model**: XGBoost (Trial 2)
-- **Final F1 Score (fail class)**: 0.91
-- **Accuracy**: > 99%
-
 ---
+- **Selected Model**: XGBoost (Trial 2)
+- **Final Performance**:
+  - **F1 Score (fail class)**: 0.91
+  - **Accuracy**: > 99%
 
-## 🔍 Key Findings
-
-The following variable control ranges were found to yield the highest success rates:
+## 🔍 Key Findings (Visualized)
+---
+Optimal control ranges identified to maximize success rates:
 
 | Variable              | Optimal Range        |
 |-----------------------|----------------------|
-| Cast Pressure         | 329 – 333            |
-| Low Section Speed     | Around 110           |
-| Biscuit Thickness     | 42 – 57              |
-| Upper Mold Temp       | 100, 170 – 250       |
-| Lower Mold Temp       | 150 – 300            |
+| Cast Pressure         | 329 – 333             |
+| Low Section Speed     | Around 110            |
+| Biscuit Thickness     | 42 – 57               |
+| Upper Mold Temperature| 100, 170 – 250        |
+| Lower Mold Temperature| 150 – 300             |
 
+Key findings were supported by distribution plots showing success probabilities across variable ranges.
+
+<img src="figures/key_findings.png">
+
+## 👨‍💻 Team Members
+---
+- 신재원 (24510107)
+- 최진아 (24510117)
+- 한상훈 (24510115)
+
+## ✅ Additional Notes
+---
+- All figures (`correlation_matrix.png`, `pivot_table.png`, `target_distribution.png`, `feature_importance.png`) were programmatically generated using Python (`matplotlib`, `seaborn`).
+- Full analysis and modeling pipeline are reproducible through the `die_casting_process_optimization.ipynb` notebook.
